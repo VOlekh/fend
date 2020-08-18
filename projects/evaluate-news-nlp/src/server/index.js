@@ -1,6 +1,9 @@
 var path = require('path')
 const express = require('express')
 const mockAPIResponse = require('./mockAPI.js')
+const dotenv = require('dotenv');
+dotenv.config();
+const fetch = require('node-fetch');
 
 const app = express()
 
@@ -22,4 +25,19 @@ app.get('/test', function (req, res) {
     
   console.log("TEST")
   res.send(mockAPIResponse)
+})
+
+app.get('/api', function (req, res) {
+    
+  console.log("API")
+  console.log(req.query)
+
+  const uri =`https://api.meaningcloud.com/sentiment-2.1?key=${process.env.API_KEY}&lang=en&txt=${req.query.text}`
+  console.log(uri)
+
+  fetch(uri)
+  .then(mcloud_res => mcloud_res.json())
+  .then(function(mcloud_res_json) {
+      res.send(mcloud_res_json)
+  })
 })
